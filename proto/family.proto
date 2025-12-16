@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package family;
+
+option go_package = "distributed-disk-register-with-grpc/proto/family;family";
+
+
+message NodeInfo {
+  string host = 1;
+  int32 port = 2;
+}
+
+
+message FamilyView {
+  repeated NodeInfo members = 1;
+}
+
+message Empty {}
+
+
+message ChatMessage {
+  string text = 1;
+  string from_host = 2;
+  int32 from_port = 3;
+  int64 timestamp = 4;
+}
+
+// Aile servisi
+service FamilyService {
+  rpc Join(NodeInfo) returns (FamilyView);
+  rpc GetFamily(Empty) returns (FamilyView);
+  rpc ReceiveChat(ChatMessage) returns (Empty);
+}
