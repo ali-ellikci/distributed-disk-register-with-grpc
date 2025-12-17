@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package family;
 
-option go_package = "distributed-disk-register-with-grpc/proto/family;family";
+option go_package = "proto/family;family";
 
 
 message NodeInfo {
