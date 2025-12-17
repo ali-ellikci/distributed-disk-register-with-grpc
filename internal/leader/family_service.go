@@ -14,7 +14,6 @@ type FamilyService struct {
 }
 
 func NewFamilyService(registry *NodeRegistry, self *pb.NodeInfo) *FamilyService {
-	registry.Add(self)
 	return &FamilyService{
 		registry: registry,
 		self:     self,
