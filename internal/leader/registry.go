@@ -2,6 +2,7 @@ package leader
 
 import (
 	pb "distributed-disk-register-with-grpc/proto/family"
+	"fmt"
 	"sync"
 )
 
@@ -17,12 +18,12 @@ func NewNodeRegistry() *NodeRegistry {
 }
 
 func nodeKey(n *pb.NodeInfo) string {
-	return n.Host + ":" + string(rune(n.Port))
+	return fmt.Sprintf("%s:%d", n.Host, n.Port)
 }
 
 func (r *NodeRegistry) Add(node *pb.NodeInfo) {
 	r.mu.Lock()
-	defer r.mu.Lock()
+	defer r.mu.Unlock()
 	r.nodes[nodeKey(node)] = node
 }
 
@@ -36,6 +37,7 @@ func (r *NodeRegistry) AddAll(nodes []*pb.NodeInfo) {
 
 func (r *NodeRegistry) Remove(node *pb.NodeInfo) {
 	r.mu.Lock()
+	defer r.mu.Unlock()
 	delete(r.nodes, nodeKey(node))
 }
 

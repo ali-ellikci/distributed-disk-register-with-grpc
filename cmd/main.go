@@ -22,6 +22,7 @@ func main() {
 
 	// Registry oluştur
 	registry := leader.NewNodeRegistry()
+	registry.Add(self)
 	service := leader.NewFamilyService(registry, self)
 
 	// gRPC server başlat
