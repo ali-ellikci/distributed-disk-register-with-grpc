@@ -2,12 +2,14 @@ package leader
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
 	pb "distributed-disk-register-with-grpc/proto/family"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func StartHealthChecker(registry *NodeRegistry, self *pb.NodeInfo) {
@@ -20,8 +22,8 @@ func StartHealthChecker(registry *NodeRegistry, self *pb.NodeInfo) {
 					continue
 				}
 
-				addr := n.Host + ":" + string(rune(n.Port))
-				conn, err := grpc.Dial(addr, grpc.WithInsecure())
+				addr := fmt.Sprintf("%s:%d", n.Host, n.Port)
+				conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 				if err != nil {
 					log.Printf("Node dead: %s:%d\n", n.Host, n.Port)
 					registry.Remove(n)
