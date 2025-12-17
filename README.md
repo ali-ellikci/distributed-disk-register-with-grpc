@@ -1,50 +1,91 @@
 # Distributed Disk Register with gRPC
 
-Bu proje, Sistem Programlama dersi kapsamında istenen
-**dağıtık, hata-tolere mesaj kayıt sisteminin**
-Go (Golang) ve gRPC kullanılarak geliştirilmiş halidir.
+This project is a **distributed, fault-tolerant disk-based register system**
+implemented in **Go (Golang)** using **gRPC**.
 
-## 📌 Proje Amacı
-- Lider–üye mimarisi ile çalışan
-- Hata toleransı destekleyen
-- Mesajları disk üzerinde saklayan
-- Dinamik üye katılımına izin veren
-bir dağıtık kayıt sistemi geliştirmek.
+It is designed as part of a *Systems Programming* course and follows a
+**Leader–Member architecture** with dynamic membership support.
 
-## 🧱 Sistem Mimarisi
-- **Client**
-  - Lider sunucuya text tabanlı `SET` ve `GET` istekleri gönderir.
-- **Leader**
-  - Client’tan gelen mesajları alır
-  - `tolerance.conf` dosyasına göre mesajları üyelere dağıtır
-  - Hata toleransı sağlandıktan sonra client’a `OK / ERROR` döner
-- **Member**
-  - Liderden gRPC üzerinden gelen mesajları alır
-  - Mesajları disk üzerinde saklar
-  - Periyodik olarak tuttuğu mesaj sayısını raporlar
+---
 
-## 🔌 İletişim
-- Client ↔ Leader : Text tabanlı protokol
-- Leader ↔ Member : gRPC (.protobuf)
+## 🎯 Project Goals
+- Leader–Member based distributed system
+- Fault-tolerant message replication
+- Persistent disk storage
+- Dynamic member join capability
+- Clear separation between binaries and core logic
 
-## 📁 Proje Dizini
-client/ → İstemci uygulaması
-leader/ → Lider sunucu
-member/ → Aile üyesi sunucular
-proto/ → gRPC protobuf tanımları
-config/ → tolerance.conf vb. ayarlar
-internal/ → Ortak yardımcı kodlar
+---
 
-markdown
-Kodu kopyala
+## 🏗️ System Architecture
 
-## 👥 Takım Çalışması
-- Geliştirme süreci GitHub Projects üzerinden yürütülmektedir.
-- Her özellik ayrı bir task ve feature branch olarak geliştirilmektedir.
-- Tamamlanan işler Pull Request ile `main` branch’e merge edilmektedir.
+### Client
+- Sends `SET` and `GET` requests to the Leader
+- Communicates via a simple text-based protocol
 
-## ⚙️ Kullanılan Teknolojiler
+### Leader
+- Accepts client requests
+- Distributes messages to Members via gRPC
+- Ensures fault tolerance based on `tolerance.conf`
+- Responds with `OK` or `ERROR` to the Client
+
+### Member
+- Receives replicated messages from the Leader
+- Persists messages on disk
+- Periodically reports its state to the Leader
+
+---
+
+## 🔌 Communication Model
+- **Client ↔ Leader**: Text-based protocol
+- **Leader ↔ Member**: gRPC (Protocol Buffers)
+
+---
+
+## 📁 Project Structure
+
+cmd/
+client/ → Client binary entrypoint
+leader/ → Leader binary entrypoint
+member/ → Member binary entrypoint
+
+internal/
+client/ → Client core logic
+leader/ → Leader core logic (gRPC server, coordination)
+member/ → Member core logic
+common/ → Shared utilities and configuration
+
+proto/
+family/ → gRPC protobuf definitions and generated code
+
+
+
+> All executable binaries live under `cmd/`  
+> All application logic lives under `internal/`
+
+---
+
+## 🧠 Development Workflow
+- Project management is handled via **GitHub Projects**
+- Each task is tracked as a **ToDo item**
+- Development is done on **feature branches**
+- Completed features are merged via **Pull Requests**
+- Tasks are moved to **Done** after successful merge
+
+---
+
+## ⚙️ Technologies Used
 - Go (Golang)
 - gRPC
 - Protocol Buffers
 - Git & GitHub Projects
+
+---
+
+## 🚀 Build & Run (Example)
+
+```bash
+go build ./cmd/leader
+go build ./cmd/member
+go build ./cmd/client
+```
