@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"time"
 
+	"distributed-disk-register-with-grpc/internal/node"
 	pb "distributed-disk-register-with-grpc/proto/family"
 )
 
-func StartFamilyPrinter(registry *NodeRegistry, self *pb.NodeInfo) {
+func StartFamilyPrinter(registry *node.Registry, self *pb.NodeInfo) {
 	go func() {
 		ticker := time.NewTicker(10 * time.Second)
 		defer ticker.Stop()
