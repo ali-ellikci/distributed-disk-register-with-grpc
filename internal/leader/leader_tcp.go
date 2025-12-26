@@ -2,16 +2,16 @@ package leader
 
 import (
 	"bufio"
-	"context"
-	pb "distributed-disk-register-with-grpc/proto/family"
-	"fmt"
+
 	"log"
 	"net"
 
-	"google.golang.org/grpc"
+	"distributed-disk-register-with-grpc/internal/common"
+	"distributed-disk-register-with-grpc/internal/node"
+	pb "distributed-disk-register-with-grpc/proto/family"
 )
 
-func StartLeaderTCPListener(registry *NodeRegistry, self *pb.NodeInfo) {
+func StartLeaderTCPListener(registry *node.Registry, self *pb.NodeInfo) {
 	go func() {
 		listener, err := net.Listen("tcp", ":6666")
 		if err != nil {
@@ -31,50 +31,30 @@ func StartLeaderTCPListener(registry *NodeRegistry, self *pb.NodeInfo) {
 	}()
 }
 
-func handleTCPClient(conn net.Conn, registry *NodeRegistry, self *pb.NodeInfo) {
+func handleTCPClient(conn net.Conn, registry *node.Registry, self *pb.NodeInfo) {
 	defer conn.Close()
-	reader := bufio.NewScanner(conn)
+	scanner := bufio.NewScanner(conn)
 
-	for reader.Scan() {
-		text := reader.Text()
-		if text == "" {
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line == "" {
 			continue
 		}
-		log.Printf("Received from TCP: %s", text)
 
-		msg := &pb.ChatMessage{
-			Text:     text,
-			FromHost: self.Host,
-			FromPort: self.Port,
-			// timestamp ekleyebilirsin
+		// Command parser
+		cmd, err := common.ParseCommand(line)
+		if err != nil {
+			log.Printf("Failed to parse command: %v", err)
+			continue
 		}
 
-		BroadcastToFamily(registry, self, msg)
+		log.Printf("Received command: %+v", cmd)
+
+		//Execute burada çağrılacak
+		_ = cmd.Execute()
 	}
 
-	if err := reader.Err(); err != nil {
+	if err := scanner.Err(); err != nil {
 		log.Printf("TCP client read error: %v", err)
-	}
-}
-
-func BroadcastToFamily(registry *NodeRegistry, self *pb.NodeInfo, msg *pb.ChatMessage) {
-	for _, n := range registry.Snapshot() {
-		if n.Host == self.Host && n.Port == self.Port {
-			continue
-		}
-
-		conn, err := grpc.Dial(fmt.Sprintf("%s:%d", n.Host, n.Port), grpc.WithInsecure())
-		if err != nil {
-			log.Printf("Failed to connect %s:%d", n.Host, n.Port)
-			continue
-		}
-
-		client := pb.NewFamilyServiceClient(conn)
-		_, err = client.ReceiveChat(context.Background(), msg)
-		if err != nil {
-			log.Printf("Failed to send message to %s:%d", n.Host, n.Port)
-		}
-
-		conn.Close()
 	}
 }
