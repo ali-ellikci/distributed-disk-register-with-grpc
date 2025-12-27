@@ -51,7 +51,12 @@ func handleTCPClient(conn net.Conn, registry *node.Registry, self *pb.NodeInfo) 
 		log.Printf("Received command: %+v", cmd)
 
 		//Execute burada çağrılacak
-		_ = cmd.Execute()
+		resp, _ := cmd.Execute()
+		_, err = conn.Write([]byte(resp + "\n"))
+		if err != nil {
+			log.Printf("TCP client write error: %v", err)
+			return
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
