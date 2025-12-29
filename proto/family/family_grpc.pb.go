@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.0
 // - protoc             v6.33.2
-// source: proto/family.proto
+// source: family.proto
 
 package family
 
@@ -19,20 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	FamilyService_Join_FullMethodName        = "/family.FamilyService/Join"
-	FamilyService_GetFamily_FullMethodName   = "/family.FamilyService/GetFamily"
-	FamilyService_ReceiveChat_FullMethodName = "/family.FamilyService/ReceiveChat"
+	FamilyService_Join_FullMethodName      = "/family.FamilyService/Join"
+	FamilyService_GetFamily_FullMethodName = "/family.FamilyService/GetFamily"
+	FamilyService_Store_FullMethodName     = "/family.FamilyService/Store"
+	FamilyService_Retrieve_FullMethodName  = "/family.FamilyService/Retrieve"
 )
 
 // FamilyServiceClient is the client API for FamilyService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// Aile servisi
 type FamilyServiceClient interface {
+	// cluster
 	Join(ctx context.Context, in *NodeInfo, opts ...grpc.CallOption) (*FamilyView, error)
 	GetFamily(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*FamilyView, error)
-	ReceiveChat(ctx context.Context, in *ChatMessage, opts ...grpc.CallOption) (*Empty, error)
+	// storage
+	Store(ctx context.Context, in *StoredMessage, opts ...grpc.CallOption) (*StoreResult, error)
+	Retrieve(ctx context.Context, in *MessageId, opts ...grpc.CallOption) (*StoredMessage, error)
 }
 
 type familyServiceClient struct {
@@ -63,10 +65,20 @@ func (c *familyServiceClient) GetFamily(ctx context.Context, in *Empty, opts ...
 	return out, nil
 }
 
-func (c *familyServiceClient) ReceiveChat(ctx context.Context, in *ChatMessage, opts ...grpc.CallOption) (*Empty, error) {
+func (c *familyServiceClient) Store(ctx context.Context, in *StoredMessage, opts ...grpc.CallOption) (*StoreResult, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Empty)
-	err := c.cc.Invoke(ctx, FamilyService_ReceiveChat_FullMethodName, in, out, cOpts...)
+	out := new(StoreResult)
+	err := c.cc.Invoke(ctx, FamilyService_Store_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *familyServiceClient) Retrieve(ctx context.Context, in *MessageId, opts ...grpc.CallOption) (*StoredMessage, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StoredMessage)
+	err := c.cc.Invoke(ctx, FamilyService_Retrieve_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,12 +88,13 @@ func (c *familyServiceClient) ReceiveChat(ctx context.Context, in *ChatMessage, 
 // FamilyServiceServer is the server API for FamilyService service.
 // All implementations must embed UnimplementedFamilyServiceServer
 // for forward compatibility.
-//
-// Aile servisi
 type FamilyServiceServer interface {
+	// cluster
 	Join(context.Context, *NodeInfo) (*FamilyView, error)
 	GetFamily(context.Context, *Empty) (*FamilyView, error)
-	ReceiveChat(context.Context, *ChatMessage) (*Empty, error)
+	// storage
+	Store(context.Context, *StoredMessage) (*StoreResult, error)
+	Retrieve(context.Context, *MessageId) (*StoredMessage, error)
 	mustEmbedUnimplementedFamilyServiceServer()
 }
 
@@ -98,8 +111,11 @@ func (UnimplementedFamilyServiceServer) Join(context.Context, *NodeInfo) (*Famil
 func (UnimplementedFamilyServiceServer) GetFamily(context.Context, *Empty) (*FamilyView, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetFamily not implemented")
 }
-func (UnimplementedFamilyServiceServer) ReceiveChat(context.Context, *ChatMessage) (*Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method ReceiveChat not implemented")
+func (UnimplementedFamilyServiceServer) Store(context.Context, *StoredMessage) (*StoreResult, error) {
+	return nil, status.Error(codes.Unimplemented, "method Store not implemented")
+}
+func (UnimplementedFamilyServiceServer) Retrieve(context.Context, *MessageId) (*StoredMessage, error) {
+	return nil, status.Error(codes.Unimplemented, "method Retrieve not implemented")
 }
 func (UnimplementedFamilyServiceServer) mustEmbedUnimplementedFamilyServiceServer() {}
 func (UnimplementedFamilyServiceServer) testEmbeddedByValue()                       {}
@@ -158,20 +174,38 @@ func _FamilyService_GetFamily_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FamilyService_ReceiveChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChatMessage)
+func _FamilyService_Store_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StoredMessage)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FamilyServiceServer).ReceiveChat(ctx, in)
+		return srv.(FamilyServiceServer).Store(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: FamilyService_ReceiveChat_FullMethodName,
+		FullMethod: FamilyService_Store_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FamilyServiceServer).ReceiveChat(ctx, req.(*ChatMessage))
+		return srv.(FamilyServiceServer).Store(ctx, req.(*StoredMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FamilyService_Retrieve_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MessageId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FamilyServiceServer).Retrieve(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FamilyService_Retrieve_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FamilyServiceServer).Retrieve(ctx, req.(*MessageId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -192,10 +226,14 @@ var FamilyService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _FamilyService_GetFamily_Handler,
 		},
 		{
-			MethodName: "ReceiveChat",
-			Handler:    _FamilyService_ReceiveChat_Handler,
+			MethodName: "Store",
+			Handler:    _FamilyService_Store_Handler,
+		},
+		{
+			MethodName: "Retrieve",
+			Handler:    _FamilyService_Retrieve_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/family.proto",
+	Metadata: "family.proto",
 }
