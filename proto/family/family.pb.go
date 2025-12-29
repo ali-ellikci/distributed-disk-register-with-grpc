@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.2
-// source: proto/family.proto
+// source: family.proto
 
 package family
 
@@ -31,7 +31,7 @@ type NodeInfo struct {
 
 func (x *NodeInfo) Reset() {
 	*x = NodeInfo{}
-	mi := &file_proto_family_proto_msgTypes[0]
+	mi := &file_family_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +43,7 @@ func (x *NodeInfo) String() string {
 func (*NodeInfo) ProtoMessage() {}
 
 func (x *NodeInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_family_proto_msgTypes[0]
+	mi := &file_family_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +56,7 @@ func (x *NodeInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NodeInfo.ProtoReflect.Descriptor instead.
 func (*NodeInfo) Descriptor() ([]byte, []int) {
-	return file_proto_family_proto_rawDescGZIP(), []int{0}
+	return file_family_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *NodeInfo) GetHost() string {
@@ -82,7 +82,7 @@ type FamilyView struct {
 
 func (x *FamilyView) Reset() {
 	*x = FamilyView{}
-	mi := &file_proto_family_proto_msgTypes[1]
+	mi := &file_family_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -94,7 +94,7 @@ func (x *FamilyView) String() string {
 func (*FamilyView) ProtoMessage() {}
 
 func (x *FamilyView) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_family_proto_msgTypes[1]
+	mi := &file_family_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -107,7 +107,7 @@ func (x *FamilyView) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FamilyView.ProtoReflect.Descriptor instead.
 func (*FamilyView) Descriptor() ([]byte, []int) {
-	return file_proto_family_proto_rawDescGZIP(), []int{1}
+	return file_family_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *FamilyView) GetMembers() []*NodeInfo {
@@ -125,7 +125,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_proto_family_proto_msgTypes[2]
+	mi := &file_family_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -137,7 +137,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_family_proto_msgTypes[2]
+	mi := &file_family_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -150,34 +150,32 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_proto_family_proto_rawDescGZIP(), []int{2}
+	return file_family_proto_rawDescGZIP(), []int{2}
 }
 
-type ChatMessage struct {
+type StoredMessage struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
-	FromHost      string                 `protobuf:"bytes,2,opt,name=from_host,json=fromHost,proto3" json:"from_host,omitempty"`
-	FromPort      int32                  `protobuf:"varint,3,opt,name=from_port,json=fromPort,proto3" json:"from_port,omitempty"`
-	Timestamp     int64                  `protobuf:"varint,4,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Text          string                 `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ChatMessage) Reset() {
-	*x = ChatMessage{}
-	mi := &file_proto_family_proto_msgTypes[3]
+func (x *StoredMessage) Reset() {
+	*x = StoredMessage{}
+	mi := &file_family_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ChatMessage) String() string {
+func (x *StoredMessage) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ChatMessage) ProtoMessage() {}
+func (*StoredMessage) ProtoMessage() {}
 
-func (x *ChatMessage) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_family_proto_msgTypes[3]
+func (x *StoredMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_family_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -188,115 +186,205 @@ func (x *ChatMessage) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ChatMessage.ProtoReflect.Descriptor instead.
-func (*ChatMessage) Descriptor() ([]byte, []int) {
-	return file_proto_family_proto_rawDescGZIP(), []int{3}
+// Deprecated: Use StoredMessage.ProtoReflect.Descriptor instead.
+func (*StoredMessage) Descriptor() ([]byte, []int) {
+	return file_family_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ChatMessage) GetText() string {
+func (x *StoredMessage) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *StoredMessage) GetText() string {
 	if x != nil {
 		return x.Text
 	}
 	return ""
 }
 
-func (x *ChatMessage) GetFromHost() string {
+type StoreResult struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StoreResult) Reset() {
+	*x = StoreResult{}
+	mi := &file_family_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StoreResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StoreResult) ProtoMessage() {}
+
+func (x *StoreResult) ProtoReflect() protoreflect.Message {
+	mi := &file_family_proto_msgTypes[4]
 	if x != nil {
-		return x.FromHost
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StoreResult.ProtoReflect.Descriptor instead.
+func (*StoreResult) Descriptor() ([]byte, []int) {
+	return file_family_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *StoreResult) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *StoreResult) GetError() string {
+	if x != nil {
+		return x.Error
 	}
 	return ""
 }
 
-func (x *ChatMessage) GetFromPort() int32 {
+type MessageId struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MessageId) Reset() {
+	*x = MessageId{}
+	mi := &file_family_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MessageId) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MessageId) ProtoMessage() {}
+
+func (x *MessageId) ProtoReflect() protoreflect.Message {
+	mi := &file_family_proto_msgTypes[5]
 	if x != nil {
-		return x.FromPort
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MessageId.ProtoReflect.Descriptor instead.
+func (*MessageId) Descriptor() ([]byte, []int) {
+	return file_family_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *MessageId) GetId() int32 {
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
 
-func (x *ChatMessage) GetTimestamp() int64 {
-	if x != nil {
-		return x.Timestamp
-	}
-	return 0
-}
+var File_family_proto protoreflect.FileDescriptor
 
-var File_proto_family_proto protoreflect.FileDescriptor
-
-const file_proto_family_proto_rawDesc = "" +
+const file_family_proto_rawDesc = "" +
 	"\n" +
-	"\x12proto/family.proto\x12\x06family\"2\n" +
+	"\ffamily.proto\x12\x06family\"2\n" +
 	"\bNodeInfo\x12\x12\n" +
 	"\x04host\x18\x01 \x01(\tR\x04host\x12\x12\n" +
 	"\x04port\x18\x02 \x01(\x05R\x04port\"8\n" +
 	"\n" +
 	"FamilyView\x12*\n" +
 	"\amembers\x18\x01 \x03(\v2\x10.family.NodeInfoR\amembers\"\a\n" +
-	"\x05Empty\"y\n" +
-	"\vChatMessage\x12\x12\n" +
-	"\x04text\x18\x01 \x01(\tR\x04text\x12\x1b\n" +
-	"\tfrom_host\x18\x02 \x01(\tR\bfromHost\x12\x1b\n" +
-	"\tfrom_port\x18\x03 \x01(\x05R\bfromPort\x12\x1c\n" +
-	"\ttimestamp\x18\x04 \x01(\x03R\ttimestamp2\xa0\x01\n" +
+	"\x05Empty\"3\n" +
+	"\rStoredMessage\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x12\n" +
+	"\x04text\x18\x02 \x01(\tR\x04text\"=\n" +
+	"\vStoreResult\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x14\n" +
+	"\x05error\x18\x02 \x01(\tR\x05error\"\x1b\n" +
+	"\tMessageId\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id2\xd8\x01\n" +
 	"\rFamilyService\x12,\n" +
 	"\x04Join\x12\x10.family.NodeInfo\x1a\x12.family.FamilyView\x12.\n" +
-	"\tGetFamily\x12\r.family.Empty\x1a\x12.family.FamilyView\x121\n" +
-	"\vReceiveChat\x12\x13.family.ChatMessage\x1a\r.family.EmptyB\x15Z\x13proto/family;familyb\x06proto3"
+	"\tGetFamily\x12\r.family.Empty\x1a\x12.family.FamilyView\x123\n" +
+	"\x05Store\x12\x15.family.StoredMessage\x1a\x13.family.StoreResult\x124\n" +
+	"\bRetrieve\x12\x11.family.MessageId\x1a\x15.family.StoredMessageB\x15Z\x13proto/family;familyb\x06proto3"
 
 var (
-	file_proto_family_proto_rawDescOnce sync.Once
-	file_proto_family_proto_rawDescData []byte
+	file_family_proto_rawDescOnce sync.Once
+	file_family_proto_rawDescData []byte
 )
 
-func file_proto_family_proto_rawDescGZIP() []byte {
-	file_proto_family_proto_rawDescOnce.Do(func() {
-		file_proto_family_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_family_proto_rawDesc), len(file_proto_family_proto_rawDesc)))
+func file_family_proto_rawDescGZIP() []byte {
+	file_family_proto_rawDescOnce.Do(func() {
+		file_family_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_family_proto_rawDesc), len(file_family_proto_rawDesc)))
 	})
-	return file_proto_family_proto_rawDescData
+	return file_family_proto_rawDescData
 }
 
-var file_proto_family_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_proto_family_proto_goTypes = []any{
-	(*NodeInfo)(nil),    // 0: family.NodeInfo
-	(*FamilyView)(nil),  // 1: family.FamilyView
-	(*Empty)(nil),       // 2: family.Empty
-	(*ChatMessage)(nil), // 3: family.ChatMessage
+var file_family_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_family_proto_goTypes = []any{
+	(*NodeInfo)(nil),      // 0: family.NodeInfo
+	(*FamilyView)(nil),    // 1: family.FamilyView
+	(*Empty)(nil),         // 2: family.Empty
+	(*StoredMessage)(nil), // 3: family.StoredMessage
+	(*StoreResult)(nil),   // 4: family.StoreResult
+	(*MessageId)(nil),     // 5: family.MessageId
 }
-var file_proto_family_proto_depIdxs = []int32{
+var file_family_proto_depIdxs = []int32{
 	0, // 0: family.FamilyView.members:type_name -> family.NodeInfo
 	0, // 1: family.FamilyService.Join:input_type -> family.NodeInfo
 	2, // 2: family.FamilyService.GetFamily:input_type -> family.Empty
-	3, // 3: family.FamilyService.ReceiveChat:input_type -> family.ChatMessage
-	1, // 4: family.FamilyService.Join:output_type -> family.FamilyView
-	1, // 5: family.FamilyService.GetFamily:output_type -> family.FamilyView
-	2, // 6: family.FamilyService.ReceiveChat:output_type -> family.Empty
-	4, // [4:7] is the sub-list for method output_type
-	1, // [1:4] is the sub-list for method input_type
+	3, // 3: family.FamilyService.Store:input_type -> family.StoredMessage
+	5, // 4: family.FamilyService.Retrieve:input_type -> family.MessageId
+	1, // 5: family.FamilyService.Join:output_type -> family.FamilyView
+	1, // 6: family.FamilyService.GetFamily:output_type -> family.FamilyView
+	4, // 7: family.FamilyService.Store:output_type -> family.StoreResult
+	3, // 8: family.FamilyService.Retrieve:output_type -> family.StoredMessage
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_proto_family_proto_init() }
-func file_proto_family_proto_init() {
-	if File_proto_family_proto != nil {
+func init() { file_family_proto_init() }
+func file_family_proto_init() {
+	if File_family_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_family_proto_rawDesc), len(file_proto_family_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_family_proto_rawDesc), len(file_family_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_proto_family_proto_goTypes,
-		DependencyIndexes: file_proto_family_proto_depIdxs,
-		MessageInfos:      file_proto_family_proto_msgTypes,
+		GoTypes:           file_family_proto_goTypes,
+		DependencyIndexes: file_family_proto_depIdxs,
+		MessageInfos:      file_family_proto_msgTypes,
 	}.Build()
-	File_proto_family_proto = out.File
-	file_proto_family_proto_goTypes = nil
-	file_proto_family_proto_depIdxs = nil
+	File_family_proto = out.File
+	file_family_proto_goTypes = nil
+	file_family_proto_depIdxs = nil
 }

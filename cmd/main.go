@@ -26,10 +26,13 @@ func main() {
 	registry := node.NewRegistry()
 	registry.Add(self)
 
+	role := "leader" // default role
+
 	// 5555 boş mu diye bak
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		// 5555 DOLU -> leader var
+		role = "follower"
 		log.Println("[INFO] Leader already running, discovering cluster")
 		discovery.DiscoverExistingNodes(host, self, registry)
 		log.Println("[INFO] Follower mode (şimdilik burada bitiyor)")
@@ -41,7 +44,7 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 
-	familyService := node.NewFamilyService(registry, self)
+	familyService := node.NewFamilyService(registry, self, role)
 	pb.RegisterFamilyServiceServer(grpcServer, familyService)
 
 	leader.StartLeaderTCPListener(registry, self)
