@@ -28,3 +28,26 @@ func StartFamilyPrinter(registry *node.Registry, self *pb.NodeInfo) {
 		}
 	}()
 }
+
+func StartMessagePrinter(coordinator *Coordinator) {
+	go func() {
+		ticker := time.NewTicker(10 * time.Second)
+		defer ticker.Stop()
+		for range ticker.C {
+			fmt.Println("======================================")
+			fmt.Println("Message Replication Status:")
+
+			coordinator.followersMutex.Lock()
+			if len(coordinator.messageFollowers) == 0 {
+				fmt.Println("  No messages replicated yet")
+			} else {
+				for messageID, followerPorts := range coordinator.messageFollowers {
+					fmt.Printf("  Message ID %d -> Ports: %v\n", messageID, followerPorts)
+				}
+			}
+			coordinator.followersMutex.Unlock()
+
+			fmt.Println("======================================")
+		}
+	}()
+}
