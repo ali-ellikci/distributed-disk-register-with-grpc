@@ -7,14 +7,17 @@ import (
 	"distributed-disk-register-with-grpc/internal/storage"
 	pb "distributed-disk-register-with-grpc/proto/family"
 	"fmt"
+	"sort"
 	"sync"
 )
 
 type Coordinator struct {
 	registry         *node.Registry
 	self             *pb.NodeInfo
-	messageFollowers map[int][]int // message ID to follower ports
+	messageFollowers map[int][]int 
 	followersMutex   sync.Mutex
+	nextIndex        int        
+	rrMutex          sync.Mutex 
 }
 
 func addFollowerForMessage(c *Coordinator, messageID int, followerPort int) {
@@ -80,7 +83,6 @@ func (c *Coordinator) handleGet(id int) string {
 		return msg
 	}
 
-	// Üyelere sor
 	for i := 0; i < len(c.registry.Snapshot()); i++ {
 		member := c.registry.Snapshot()[i]
 		if member.Port == c.self.Port || member.Host == c.self.Host {
@@ -98,13 +100,37 @@ func (c *Coordinator) handleGet(id int) string {
 }
 
 func (c *Coordinator) pickMember(tolerance int) []*pb.NodeInfo {
-	nodes := c.registry.Snapshot()
-	var selected []*pb.NodeInfo
-	if len(nodes) < tolerance {
-		tolerance = len(nodes)
+	allNodes := c.registry.Snapshot()
+
+	var candidates []*pb.NodeInfo
+	for _, node := range allNodes {
+		if node.Port != c.self.Port || node.Host != c.self.Host {
+			candidates = append(candidates, node)
+		}
 	}
+
+	sort.Slice(candidates, func(i, j int) bool {
+		return candidates[i].Port < candidates[j].Port
+	})
+
+	totalCandidates := len(candidates)
+	if totalCandidates == 0 {
+		return nil
+	}
+
+	if totalCandidates < tolerance {
+		tolerance = totalCandidates
+	}
+
+	c.rrMutex.Lock()
+	startIndex := c.nextIndex
+	c.nextIndex = (c.nextIndex + tolerance) % totalCandidates
+	c.rrMutex.Unlock()
+
+	var selected []*pb.NodeInfo
 	for i := 0; i < tolerance; i++ {
-		selected = append(selected, nodes[i])
+		idx := (startIndex + i) % totalCandidates
+		selected = append(selected, candidates[idx])
 	}
 
 	return selected
