@@ -1,14 +1,12 @@
 package common
 
 import (
-	"distributed-disk-register-with-grpc/internal/storage"
 	"errors"
 	"strconv"
 	"strings"
 )
 
 type Command interface {
-	Execute() (string, error)
 }
 
 type SetCommand struct {
@@ -16,24 +14,8 @@ type SetCommand struct {
 	Text string
 }
 
-func (sc *SetCommand) Execute() (string, error) {
-	err := storage.WriteMessage(sc.ID, sc.Text)
-	if err != nil {
-		return "", err
-	}
-	return "OK", nil
-}
-
 type GetCommand struct {
 	ID int
-}
-
-func (gc *GetCommand) Execute() (string, error) {
-	msg, err := storage.ReadMessage(gc.ID)
-	if err != nil {
-		return "NOT_FOUND", err
-	}
-	return msg, nil
 }
 
 func ParseCommand(msg string) (Command, error) {

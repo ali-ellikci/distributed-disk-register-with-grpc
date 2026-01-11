@@ -29,12 +29,15 @@ message MessageId {
   int32 id = 1;
 }
 
+// FamilyService provides operations for cluster management and distributed message storage.
 service FamilyService {
   // cluster
   rpc Join(NodeInfo) returns (FamilyView);
+  // GetFamily retrieves the current family view of the cluster.
   rpc GetFamily(Empty) returns (FamilyView);
 
   // storage
   rpc Store(StoredMessage) returns (StoreResult);
+  // Retrieve retrieves a stored message by its ID.
   rpc Retrieve(MessageId) returns (StoredMessage);
 }
