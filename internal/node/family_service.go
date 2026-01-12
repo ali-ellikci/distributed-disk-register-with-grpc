@@ -30,6 +30,14 @@ func (s *FamilyService) Join(ctx context.Context, req *pb.NodeInfo) (*pb.FamilyV
 	log.Printf("[JOIN] %s:%d\n", req.Host, req.Port)
 	s.registry.Add(req)
 
+	// Dead nodes listesinde varsa sil
+	deadNodes := s.registry.GetDeadNodes()
+	key := fmt.Sprintf("%s:%d", req.Host, req.Port)
+	if deadNodes[key] {
+		s.registry.RemoveDeadNode(req.Host, req.Port)
+		log.Printf("[REVIVED] %s:%d (from dead nodes)\n", req.Host, req.Port)
+	}
+
 	return &pb.FamilyView{
 		Members: s.registry.Snapshot(),
 	}, nil
