@@ -8,7 +8,7 @@ import (
 	pb "distributed-disk-register-with-grpc/proto/family"
 )
 
-func StartFamilyPrinter(registry *node.Registry, self *pb.NodeInfo) {
+func StartFamilyPrinter(coordinator *Coordinator, registry *node.Registry, self *pb.NodeInfo) {
 	go func() {
 		ticker := time.NewTicker(10 * time.Second)
 		defer ticker.Stop()
@@ -22,7 +22,19 @@ func StartFamilyPrinter(registry *node.Registry, self *pb.NodeInfo) {
 				if n.Host == self.Host && n.Port == self.Port {
 					meMark = " (me)"
 				}
-				fmt.Printf(" - %s:%d%s\n", n.Host, n.Port, meMark)
+
+				messageCount := 0
+				coordinator.followersMutex.Lock()
+				for _, ports := range coordinator.messageFollowers {
+					for _, p := range ports {
+						if p == int(n.Port) {
+							messageCount++
+						}
+					}
+				}
+				coordinator.followersMutex.Unlock()
+
+				fmt.Printf(" - %s:%d%s [%d messages]\n", n.Host, n.Port, meMark, messageCount)
 			}
 			deadNodes := registry.GetDeadNodes()
 			if len(deadNodes) > 0 {
@@ -56,5 +68,6 @@ func StartMessagePrinter(coordinator *Coordinator) {
 
 			fmt.Println("======================================")
 		}
+
 	}()
 }

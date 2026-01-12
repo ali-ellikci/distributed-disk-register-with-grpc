@@ -63,12 +63,15 @@ func (s *FamilyService) Store(ctx context.Context, msg *pb.StoredMessage) (*pb.S
 	fmt.Println("[INFO] Gelen yazılıyor ", msg)
 
 	err := storage.WriteMessage(int(msg.Id), msg.Text)
+
 	if err != nil {
 		return &pb.StoreResult{
 			Success: false,
 			Error:   err.Error(),
 		}, nil
 	}
+
+	s.registry.increaseMsgNumber()
 
 	log.Printf("[STORE] id=%d\n", msg.Id)
 	return &pb.StoreResult{Success: true}, nil

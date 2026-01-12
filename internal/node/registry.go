@@ -11,13 +11,22 @@ type Registry struct {
 	mu        sync.Mutex
 	nodes     map[string]*pb.NodeInfo
 	deadNodes map[string]bool
+	msgNumber int
 }
 
 func NewRegistry() *Registry {
 	return &Registry{
 		nodes:     make(map[string]*pb.NodeInfo),
 		deadNodes: make(map[string]bool),
+		msgNumber: 0,
 	}
+}
+
+func (r *Registry) increaseMsgNumber() int {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.msgNumber++
+	return r.msgNumber
 }
 
 func nodeKey(n *pb.NodeInfo) string {
