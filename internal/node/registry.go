@@ -70,3 +70,10 @@ func (r *Registry) GetDeadNodes() map[string]bool {
 	defer r.mu.Unlock()
 	return r.deadNodes
 }
+
+func (r *Registry) RemoveDeadNode(host string, port int32) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	key := fmt.Sprintf("%s:%d", host, port)
+	delete(r.deadNodes, key)
+}
