@@ -46,6 +46,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}
+		node.StartMsgNumberPrinter(registry)
 		grpcServer.Serve(lis)
 
 		return
@@ -76,7 +77,7 @@ func main() {
 
 	leader.StartLeaderTCPListener(coordinator)
 	node.StartHealthChecker(registry, self)
-	leader.StartFamilyPrinter(registry, self)
+	leader.StartFamilyPrinter(coordinator, registry, self)
 	leader.StartMessagePrinter(coordinator)
 
 	log.Printf("Leader started on %s:%d\n", host, leaderPort)
