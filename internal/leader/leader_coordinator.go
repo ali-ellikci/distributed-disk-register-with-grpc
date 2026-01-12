@@ -3,6 +3,7 @@ package leader
 import (
 	"distributed-disk-register-with-grpc/internal/common"
 	"distributed-disk-register-with-grpc/internal/config"
+	"distributed-disk-register-with-grpc/internal/logger"
 	"distributed-disk-register-with-grpc/internal/node"
 	"distributed-disk-register-with-grpc/internal/storage"
 	pb "distributed-disk-register-with-grpc/proto/family"
@@ -71,10 +72,11 @@ func (c *Coordinator) handleSet(id int, text string) string {
 			continue
 		}
 		fmt.Println("Sending SET to member:", member.Host, member.Port)
+		logger.TCPEvent("Sending SET to follower %s:%d for ID %d", member.Host, member.Port, id)
 		addFollowerForMessage(c, id, int(member.Port))
 		go SendSetToMember(member, id, text)
 	}
-	return "SET HANDLED BY LEADER"
+	return "OK"
 }
 
 func (c *Coordinator) handleGet(id int) string {
@@ -89,6 +91,7 @@ func (c *Coordinator) handleGet(id int) string {
 			continue
 		}
 		fmt.Println("Sending GET to member:", member.Host, member.Port)
+		logger.TCPEvent("Sending GET to follower %s:%d for ID %d", member.Host, member.Port, id)
 		msg, err := SendGetToMember(member, id, c.registry)
 		if err == nil {
 			return msg
@@ -96,7 +99,7 @@ func (c *Coordinator) handleGet(id int) string {
 
 	}
 
-	return "GET HANDLED BY LEADER"
+	return "NOT_FOUND"
 }
 
 func (c *Coordinator) pickMember(tolerance int) []*pb.NodeInfo {

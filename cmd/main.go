@@ -7,6 +7,7 @@ import (
 
 	"distributed-disk-register-with-grpc/internal/discovery"
 	"distributed-disk-register-with-grpc/internal/leader"
+	"distributed-disk-register-with-grpc/internal/logger"
 	"distributed-disk-register-with-grpc/internal/node"
 	pb "distributed-disk-register-with-grpc/proto/family"
 
@@ -50,6 +51,9 @@ func main() {
 		return
 	}
 	role := "leader"
+
+	logger.Init("logs/app.log")
+	defer logger.Close()
 
 	self := &pb.NodeInfo{
 		Host: host,
