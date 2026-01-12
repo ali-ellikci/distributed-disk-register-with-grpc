@@ -2,6 +2,7 @@ package leader
 
 import (
 	"context"
+	"distributed-disk-register-with-grpc/internal/node"
 	pb "distributed-disk-register-with-grpc/proto/family"
 
 	"fmt"
@@ -32,12 +33,15 @@ func SendSetToMember(node *pb.NodeInfo, id int, text string) error {
 
 }
 
-func SendGetToMember(node *pb.NodeInfo, id int) (string, error) {
+func SendGetToMember(node *pb.NodeInfo, id int, registry *node.Registry) (string, error) {
 	address := fmt.Sprintf("%s:%d", node.Host, node.Port)
 
 	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
+		fmt.Println("Connection failed, removing node from registry:", address)
+		registry.RemoveByAddress(node.Host, node.Port)
 		return "", err
+
 	}
 	defer conn.Close()
 	client := pb.NewFamilyServiceClient(conn)

@@ -24,6 +24,13 @@ func StartFamilyPrinter(registry *node.Registry, self *pb.NodeInfo) {
 				}
 				fmt.Printf(" - %s:%d%s\n", n.Host, n.Port, meMark)
 			}
+			deadNodes := registry.GetDeadNodes()
+			if len(deadNodes) > 0 {
+				fmt.Println("Dead Nodes:")
+				for address := range deadNodes {
+					fmt.Printf(" - %s (dead)\n", address)
+				}
+			}
 			fmt.Println("======================================")
 		}
 	}()

@@ -14,10 +14,10 @@ import (
 type Coordinator struct {
 	registry         *node.Registry
 	self             *pb.NodeInfo
-	messageFollowers map[int][]int 
+	messageFollowers map[int][]int
 	followersMutex   sync.Mutex
-	nextIndex        int        
-	rrMutex          sync.Mutex 
+	nextIndex        int
+	rrMutex          sync.Mutex
 }
 
 func addFollowerForMessage(c *Coordinator, messageID int, followerPort int) {
@@ -89,7 +89,7 @@ func (c *Coordinator) handleGet(id int) string {
 			continue
 		}
 		fmt.Println("Sending GET to member:", member.Host, member.Port)
-		msg, err := SendGetToMember(member, id)
+		msg, err := SendGetToMember(member, id, c.registry)
 		if err == nil {
 			return msg
 		}
