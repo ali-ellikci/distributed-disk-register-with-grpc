@@ -8,13 +8,15 @@ import (
 )
 
 type Registry struct {
-	mu    sync.Mutex
-	nodes map[string]*pb.NodeInfo
+	mu        sync.Mutex
+	nodes     map[string]*pb.NodeInfo
+	deadNodes map[string]bool
 }
 
 func NewRegistry() *Registry {
 	return &Registry{
-		nodes: make(map[string]*pb.NodeInfo),
+		nodes:     make(map[string]*pb.NodeInfo),
+		deadNodes: make(map[string]bool),
 	}
 }
 
@@ -39,7 +41,17 @@ func (r *Registry) AddAll(nodes []*pb.NodeInfo) {
 func (r *Registry) Remove(node *pb.NodeInfo) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	delete(r.nodes, nodeKey(node))
+	key := nodeKey(node)
+	delete(r.nodes, key)
+	r.deadNodes[key] = true
+}
+
+func (r *Registry) RemoveByAddress(host string, port int32) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	key := fmt.Sprintf("%s:%d", host, port)
+	delete(r.nodes, key)
+	r.deadNodes[key] = true
 }
 
 func (r *Registry) Snapshot() []*pb.NodeInfo {
@@ -51,4 +63,10 @@ func (r *Registry) Snapshot() []*pb.NodeInfo {
 		out = append(out, n)
 	}
 	return out
+}
+
+func (r *Registry) GetDeadNodes() map[string]bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return r.deadNodes
 }
